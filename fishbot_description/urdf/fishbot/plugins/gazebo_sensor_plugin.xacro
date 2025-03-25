@@ -1,0 +1,177 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+    <!-- 声明一个弘 雷达 -->
+    <xacro:macro name="gazebo_sensor_plugin">
+        <!-- 雷达对应关节的名字 -->
+        <gazebo reference="laser_link">
+            <!-- 自己创建的名字，类型：射线激光 -->
+            <sensor name="laserscan" type="ray">
+                <!-- 自己创建的名字，动态链接库 -->
+                <plugin name="laserscan" filename="libgazebo_ros_ray_sensor.so">
+                    <!-- 写给ros看的代码 -->
+                    <ros>
+                        <!-- 命名空间 -->
+                        <namespace>/</namespace>
+                        <!-- 重映射 -->
+                        <remapping>~/out:=scan</remapping>
+                    </ros>
+                    <!-- 输出话题的名字和类型 -->
+                    <output_type>sensor_msgs/LaserScan</output_type>
+                    <frame_name>laser_link</frame_name>
+                </plugin>
+                <!-- 是否开启 -->
+                <always_on>true</always_on>
+                <!-- 是否可视化 -->
+                <visualize>true</visualize>
+                <!-- 更新速率 -->
+                <update_rate>5</update_rate>
+                <!-- 位姿（没有任何偏移和旋转） -->
+                <pose>0 0 0 0 0 0</pose>
+				<!-- 激光传感器配置 -->
+                <ray>
+                    <!-- 设置扫描范围 -->
+                    <scan>
+                        <horizontal>
+                            <!-- 水平转一圈采集到的点（二维） -->
+                            <samples>360</samples>
+                            <!-- 分辨率 -->
+                            <resolution>1.000000</resolution>
+                            <!-- 最小角度 -->
+                            <min_angle>0.000000</min_angle>
+                            <!-- 最大角度（弧度） -->
+                            <max_angle>6.280000</max_angle>
+                        </horizontal>
+                    </scan>
+                    <!-- 设置扫描距离 -->
+                    <range>
+                        <min>0.120000</min>
+                        <max>8.0</max>
+                        <!-- 分辨率 -->
+                        <resolution>0.015000</resolution>
+                    </range>
+                    <!-- 设置噪声 -->
+                    <noise>
+                        <!-- 高斯噪声 -->
+                        <type>gaussian</type>
+                        <!-- 均值 -->
+                        <mean>0.0</mean>
+                        <!-- 标准差 -->
+                        <stddev>0.01</stddev>
+                    </noise>
+                </ray>
+            </sensor>
+        </gazebo>
+
+
+<!-- 雷达对应关节的名字（六轴传感器，惯性测量传感器） -->
+<gazebo reference="imu_link">
+    <!-- 自己设的,传感器的名字，类型 -->
+    <sensor name="imu_sensor" type="imu">
+        <!-- 插件的名字，动态链接库 -->
+        <plugin name="imu_plugin" filename="libgazebo_ros_imu_sensor.so">
+            <ros>
+                <namespace>/</namespace>
+                <remapping>~/out:=imu</remapping>
+            </ros>
+            <!-- 初始化朝向（不使用初始化方向作为参考系） -->
+            <initial_orientation_as_reference>false</initial_orientation_as_reference>
+        </plugin>
+        <!-- 更新速率 -->
+        <update_rate>100</update_rate>
+        <!-- 是否打开传感器 -->
+        <always_on>true</always_on>
+        <!-- 六轴噪声设置 -->
+        <imu>
+            <angular_velocity>
+                <x>
+                    <noise type="gaussian">
+                        <mean>0.0</mean>
+                        <stddev>2e-4</stddev>
+                        <bias_mean>0.0000075</bias_mean>
+                        <bias_stddev>0.0000008</bias_stddev>
+                    </noise>
+                </x>
+                <y>
+                    <noise type="gaussian">
+                        <mean>0.0</mean>
+                        <stddev>2e-4</stddev>
+                        <bias_mean>0.0000075</bias_mean>
+                        <bias_stddev>0.0000008</bias_stddev>
+                    </noise>
+                </y>
+                <z>
+                    <noise type="gaussian">
+                        <mean>0.0</mean>
+                        <stddev>2e-4</stddev>
+                        <bias_mean>0.0000075</bias_mean>
+                        <bias_stddev>0.0000008</bias_stddev>
+                    </noise>
+                </z>
+            </angular_velocity>
+            <linear_acceleration>
+                <x>
+                    <noise type="gaussian">
+                        <mean>0.0</mean>
+                        <stddev>1.7e-2</stddev>
+                        <bias_mean>0.1</bias_mean>
+                        <bias_stddev>0.001</bias_stddev>
+                    </noise>
+                </x>
+                <y>
+                    <noise type="gaussian">
+                        <mean>0.0</mean>
+                        <stddev>1.7e-2</stddev>
+                        <bias_mean>0.1</bias_mean>
+                        <bias_stddev>0.001</bias_stddev>
+                    </noise>
+                </y>
+                <z>
+                    <noise type="gaussian">
+                        <mean>0.0</mean>
+                        <stddev>1.7e-2</stddev>
+                        <bias_mean>0.1</bias_mean>
+                        <bias_stddev>0.001</bias_stddev>
+                    </noise>
+                </z>
+            </linear_acceleration>
+        </imu>
+    </sensor>
+</gazebo>
+
+<!-- 深度相机，对应的关节 -->
+<gazebo reference="camera_link">
+    <!-- 类型：深度，名字：自己取的 -->
+    <sensor type="depth" name="camera_sensor">
+        <!-- 插件名字，动态链接库 -->
+        <plugin name="depth_camera" filename="libgazebo_ros_camera.so">
+            <!-- 坐标系的名字 -->
+            <frame_name>camera_optical_link</frame_name>
+        </plugin>
+        <!-- 是否开启 -->
+        <always_on>true</always_on>
+        <!-- 更新速率 -->
+        <update_rate>10</update_rate>
+        <!-- 相机配置 -->
+        <camera name="camera">
+            <!-- 水平视角 -->
+            <horizontal_fov>1.5009831567</horizontal_fov>
+            <!-- 图像配置 -->
+            <image>
+                <width>800</width>
+                <height>600</height>
+                <format>R8G8B8</format>
+            </image>
+            <!-- 图像畸变参数 -->
+            <distortion>
+                <k1>0.0</k1>
+                <k2>0.0</k2>
+                <k3>0.0</k3>
+                <p1>0.0</p1>
+                <p2>0.0</p2>
+                <center>0.5 0.5</center>
+            </distortion>
+        </camera>
+    </sensor>
+</gazebo>
+   </xacro:macro>
+</robot>

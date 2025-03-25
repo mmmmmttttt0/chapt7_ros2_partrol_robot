@@ -1,0 +1,58 @@
+<!-- #版本号 -->
+<?xml version="1.0"?>
+<!-- #机器人的名字 -->
+<robot name="first_robot">
+    <!-- 机器人身体部分 -->
+    <!-- #添加机器人子部件 -->
+    <link name="base_link">
+        <!-- 机器人部件的外观描述 -->
+        <visual>
+            <!-- 沿着自己几何中心的偏移和旋转量 -->
+            <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
+            <!-- 几何形状 -->
+            <geometry>
+                <!--  正方体长宽高 -->
+                <!-- <box size="0.0 0.0 0.0"/> -->
+                <!-- 圆柱体 半径m，高度m -->
+                <cylinder radius="0.10" length="0.12"/>
+            </geometry>
+            <!-- 材质，颜色红绿蓝（0.0-1.0）透明度（半透明1.0表示不透明） -->
+            <material name="white">
+                <color rgba="1.0 1.0 1.0 0.5"/>
+            </material>
+        </visual>
+    </link>
+
+    <!-- 机器人的IMU部件，惯性测量传感器 -->
+    <link name="imu_link">
+        <!-- 机器人部件的外观描述 -->
+        <visual>
+            <!-- 沿着自己几何中心的偏移和旋转量 -->
+            <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
+            <!-- 几何形状 -->
+            <geometry>
+                <!--  正方体长宽高 -->
+                <box size="0.02 0.02 0.02"/>
+            </geometry>
+            <!-- 材质，颜色红绿蓝（0.0-1.0）透明度（半透明1.0表示不透明） -->
+            <material name="black">
+                <color rgba="0.0 0.0 0.0 0.5"/>
+            </material>
+        </visual>
+    </link>
+
+    <!-- 机器人的关节，用于组合机器人的部件-->
+    <!-- 名字，关节固定死 -->
+    <joint name="imu_joint" type="fixed">
+        <!-- 父亲标签 -->
+        <parent link="base_link"/>
+        <!-- 子标签 -->
+        <child link="imu_link"/>
+        <!-- 固定的位置（把子固定到父亲上所固定的位置，几何中心3cm处） -->
+        <origin xyz="0.0 0.0 0.03" rpy="0.0 0.0 0.0"/>
+        <!-- 旋转轴 -->
+        <!-- <axis xyz="0.0 0.0 0.0"/> -->
+        <!-- 限制 -->
+        <!-- <limit lower="0.0" upper="0.0" effort="0.0" velocity="0.0"/> -->
+    </joint>
+</robot>

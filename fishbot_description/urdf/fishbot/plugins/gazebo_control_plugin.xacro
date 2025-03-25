@@ -1,0 +1,43 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+    <!-- 声明一个弘 两轮差速控制 -->
+    <xacro:macro name="gazebo_control_plugin">
+        <gazebo>
+            <!-- 添加一个插件 插件名字 插件文件名字（是一个动态链接库（在装ros2时已经装过了）） -->
+            <plugin name='diff_drive' filename='libgazebo_ros_diff_drive.so'>
+                <!-- 给ros看的重命名 -->
+                <ros>
+                    <!-- 使用默认的命名空间 -->
+                    <namespace>/</namespace>
+                    <!-- cmd重映射 -->
+                    <remapping>cmd_vel:=cmd_vel</remapping>
+                    <!-- 里程计重映射 -->
+                    <remapping>odom:=odom</remapping>
+                </ros>
+                <!-- 更新频率hz -->
+                <update_rate>30</update_rate>
+                <!-- wheels -->
+                <!-- 轮子的关节控制（因为是两轮差速控制，所以只能配置两个关节（左右，前后没有）） -->
+                <left_joint>left_wheel_joint</left_joint>
+                <right_joint>right_wheel_joint</right_joint>
+                <!-- kinematics -->
+                <!-- 关于运动学相关的设置 两轮之间的距离 轮子的直径 -->
+                <wheel_separation>0.2</wheel_separation>
+                <wheel_diameter>0.064</wheel_diameter>
+                <!-- limits -->
+                <!-- 限制 力：轮子的最大扭矩 加速度：轮子最大的加速度 -->
+                <max_wheel_torque>20</max_wheel_torque>
+                <max_wheel_acceleration>1.0</max_wheel_acceleration>
+                <!-- output -->
+                <!-- 里程计 是否发布里程计：是（发布odom话题） 是（发布动态tf话题） 是（发布轮子的tf话题） -->
+                <publish_odom>true</publish_odom>
+                <publish_odom_tf>true</publish_odom_tf>
+                <publish_wheel_tf>true</publish_wheel_tf>
+
+                <!-- 里程计数据中的frameid -->
+                <odometry_frame>odom</odometry_frame>
+                <robot_base_frame>base_footprint</robot_base_frame>
+            </plugin>
+        </gazebo>
+   </xacro:macro>
+</robot>

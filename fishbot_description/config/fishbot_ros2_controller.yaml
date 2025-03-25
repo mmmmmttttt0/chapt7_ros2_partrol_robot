@@ -1,0 +1,52 @@
+controller_manager:
+  ros__parameters:
+    update_rate: 100  # Hz
+    use_sim_time: true
+    
+    fishbot_joint_state_broadcaster: # 关节状态控制器
+      type: joint_state_broadcaster/JointStateBroadcaster # 类型
+    fishbot_effort_controller: # 力控控制器
+      type: effort_controllers/JointGroupEffortController
+    fishbot_diff_drive_controller: # 两轮差速控制器
+      type: diff_drive_controller/DiffDriveController
+
+# 力控进行配置
+fishbot_effort_controller:
+  ros__parameters:
+    joints: #  关节
+      - left_wheel_joint
+      - right_wheel_joint
+    command_interfaces:    # 命令接口
+      - effort
+    state_interfaces:    # 状态接口
+      - position
+      - velocity
+      - effort
+
+# 两轮差速控制器配置
+fishbot_diff_drive_controller:
+  ros__parameters:
+    left_wheel_names: ["left_wheel_joint"]
+    right_wheel_names: ["right_wheel_joint"]
+
+    wheel_separation: 0.20 # 轮子距离
+    #wheels_per_side: 1  # actually 2, but both are controlled by 1 signal
+    wheel_radius: 0.032 # 轮子半径
+
+    wheel_separation_multiplier: 1.0
+    left_wheel_radius_multiplier: 1.0
+    right_wheel_radius_multiplier: 1.0
+
+    publish_rate: 50.0
+    odom_frame_id: odom
+    base_frame_id: base_footprint
+    pose_covariance_diagonal : [0.001, 0.001, 0.0, 0.0, 0.0, 0.01] # 两个协方差的噪声
+    twist_covariance_diagonal: [0.001, 0.0, 0.0, 0.0, 0.0, 0.01]
+
+    open_loop: false # 闭环控制
+    enable_odom_tf: true # 使能里程计的发布
+
+    cmd_vel_timeout: 0.5 # 超时时间
+    #publish_limited_velocity: true
+    use_stamped_vel: false
+    #velocity_rolling_window_size: 10

@@ -1,0 +1,81 @@
+<?xml version="1.0"?>
+<!-- #机器人的名字{1网址作用:用了xacro这个弘语言了} -->
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+<!-- 声明质量与惯性属性部分（因为要在中用质量与惯性属性部分） -->
+<xacro:include filename="$(find fishbot_description)/urdf/fishbot/common_inertia.xacro"/>
+
+
+    <!-- 相机声明一个弘imu -->
+    <xacro:macro name="camera_xacro" params="xyz">
+        <!-- 机器人的IMU部件，惯性测量传感器 -->
+        <link name="camera_link">
+            <!-- 机器人部件的外观描述 -->
+            <visual>
+                <!-- 沿着自己几何中心的偏移和旋转量 -->
+                <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
+                <!-- 几何形状 -->
+                <geometry>
+                    <!--  正方体长宽高 -->
+                    <box size="0.02 0.10 0.02"/>
+                </geometry>
+                <!-- 材质，颜色红绿蓝（0.0-1.0）透明度（半透明1.0表示不透明） -->
+                <material name="black">
+                    <color rgba="0.0 0.0 0.0 0.5"/>
+                </material>
+            </visual>
+            <collision>
+                <!-- 沿着自己几何中心的偏移和旋转量 -->
+                <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
+                <!-- 几何形状 -->
+                <geometry>
+                    <!--  正方体长宽高 -->
+                    <box size="0.02 0.10 0.02"/>
+                </geometry>
+                <!-- 材质，颜色红绿蓝（0.0-1.0）透明度（半透明1.0表示不透明） -->
+                <material name="black">
+                    <color rgba="0.0 0.0 0.0 0.5"/>
+                </material>
+            </collision>
+
+            <xacro:box_inertia m="0.1" w="0.02" h="0.10" d="0.02" />
+        </link>  
+
+        <!-- 相机修正虚拟部件 -->
+        <link name="camera_optical_link">
+            
+        </link>  
+
+        <!-- 机器人的关节，用于组合机器人的部件-->
+        <!-- 名字，关节固定死 -->
+        <joint name="camera_joint" type="fixed">
+            <!-- 父亲标签 -->
+            <parent link="base_link"/>
+            <!-- 子标签 -->
+            <child link="camera_link"/>
+            <!-- 固定的位置（把子固定到父亲上所固定的位置，几何中心3cm处） -->
+            <origin xyz="${xyz}" rpy="0.0 0.0 0.0"/>
+            <!-- 旋转轴 -->
+            <!-- <axis xyz="0.0 0.0 0.0"/> -->
+            <!-- 限制 -->
+            <!-- <limit lower="0.0" upper="0.0" effort="0.0" velocity="0.0"/> -->
+        </joint>
+
+        <!-- 添加虚拟关节(虚拟部件在相机上) -->
+        <joint name="camera_optical_joint" type="fixed">
+            <!-- 父亲标签 -->
+            <parent link="camera_link"/>
+            <!-- 子标签 -->
+            <child link="camera_optical_link"/>
+            <!-- 固定的位置（把子固定到父亲上所固定的位置，几何中心3cm处） -->
+            <origin xyz="0 0 0" rpy="${-pi/2} 0.0 ${-pi/2}"/>
+            <!-- 旋转轴 -->
+            <!-- <axis xyz="0.0 0.0 0.0"/> -->
+            <!-- 限制 -->
+            <!-- <limit lower="0.0" upper="0.0" effort="0.0" velocity="0.0"/> -->
+        </joint>
+        
+    </xacro:macro>
+
+</robot>
+
+<!-- xacro不能直接用,必须得转成urdf才能用 -->

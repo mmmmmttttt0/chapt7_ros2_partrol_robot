@@ -1,0 +1,70 @@
+<?xml version="1.0"?>
+<!-- #机器人的名字{1网址作用:用了xacro这个弘语言了} -->
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+<!-- 声明质量与惯性属性部分（因为要在中用质量与惯性属性部分） -->
+<xacro:include filename="$(find fishbot_description)/urdf/fishbot/common_inertia.xacro"/>
+
+
+    <!-- 声明一个弘imu -->
+    <xacro:macro name="caster_xacro" params="caster_name xyz">
+        <!-- 机器人的IMU部件，惯性测量传感器 -->
+        <link name="${caster_name}_link">
+            <!-- 机器人部件的外观描述 -->
+            <visual>
+                <!-- 沿着自己几何中心的偏移和旋转量 -->
+                <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
+                <!-- 几何形状 -->
+                <geometry>
+                    <!-- 圆球型  -->
+                    <sphere radius="0.0159"/>
+                </geometry>
+                <!-- 材质，颜色红绿蓝（0.0-1.0）透明度（半透明1.0表示不透明） -->
+                <material name="yellow">
+                    <color rgba="1.0 1.0 0.0 0.8"/>
+                </material>
+            </visual>
+            <collision>
+                <!-- 沿着自己几何中心的偏移和旋转量 -->
+                <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
+                <!-- 几何形状 -->
+                <geometry>
+                    <!-- 圆球型  -->
+                    <sphere radius="0.0159"/>
+                </geometry>
+                <!-- 材质，颜色红绿蓝（0.0-1.0）透明度（半透明1.0表示不透明） -->
+                <material name="yellow">
+                    <color rgba="1.0 1.0 0.0 0.8"/>
+                </material>
+            </collision>
+
+            <xacro:sphere_inertia m="0.05" r="0.0159" />
+        </link>   
+
+        <!-- 机器人的关节，用于组合机器人的部件-->
+        <!-- 名字，关节固定死 -->
+        <joint name="${caster_name}_joint" type="fixed">
+            <!-- 父亲标签 -->
+            <parent link="base_link"/>
+            <!-- 子标签 -->
+            <child link="${caster_name}_link"/>
+            <!-- 固定的位置（把子固定到父亲上所固定的位置，几何中心3cm处） -->
+            <origin xyz="${xyz}" rpy="0.0 0.0 0.0"/>
+            <!-- 旋转轴 -->
+            <!-- <axis xyz="0 1 0"/> -->
+            <!-- 限制 -->
+            <!-- <limit lower="0.0" upper="0.0" effort="0.0" velocity="0.0"/> -->
+        </joint>
+
+        <!-- mu1:切向的摩擦系数 mu2:法向的摩擦系数 kp:接触的刚度系数 kd:阻尼系数 -->
+        <gazebo reference="${caster_name}_caster_link">
+            <mu1 value="0.0" />
+            <mu2 value="0.0" />
+            <kp value="1000000000.0" />
+            <kd value="1.0" />
+        </gazebo>
+
+    </xacro:macro>
+
+</robot>
+
+<!-- xacro不能直接用,必须得转成urdf才能用 -->
